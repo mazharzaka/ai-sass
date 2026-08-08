@@ -1,15 +1,9 @@
-import { auth, currentUser } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
+import { currentUser } from "@clerk/nextjs/server"
 import { Button } from "@workspace/ui/components/button"
 import Link from "next/link"
 
 export default async function DashboardPage() {
-  const { userId } = await auth()
   const user = await currentUser()
-
-  if (!userId) {
-    redirect("/sign-in")
-  }
 
   return (
     <div className="flex flex-col gap-6 p-8 max-w-7xl mx-auto">
