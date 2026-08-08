@@ -1,8 +1,14 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { OrganizationSwitcher } from "@clerk/nextjs"
-import Link from "next/link"
-import { LayoutDashboard } from "lucide-react"
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@workspace/ui/components/sidebar"
+import { DashboardSidebar } from "@/components/dashboard-sidebar"
+import { Separator } from "@workspace/ui/components/separator"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from "@workspace/ui/components/breadcrumb"
 
 export default async function DashboardLayout({
   children,
@@ -20,37 +26,32 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside className="w-64 border-r bg-card flex flex-col">
-        {/* Sidebar Header with Switcher */}
-        <div className="p-4 border-b flex items-center justify-between">
-          <OrganizationSwitcher 
-            hidePersonal
-            afterCreateOrganizationUrl="/dashboard"
-            afterSelectOrganizationUrl="/dashboard"
-            appearance={{
-              elements: {
-                rootBox: "w-full",
-                organizationSwitcherTrigger: "w-full border px-3 py-2 rounded-md hover:bg-accent",
-              }
-            }}
-          />
-        </div>
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full bg-sidebar/50">
 
-        {/* Sidebar Navigation */}
-        <nav className="flex-1 p-4 space-y-1">
-          <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2 rounded-md bg-accent text-accent-foreground text-sm font-medium">
-            <LayoutDashboard className="h-4 w-4" />
-            <span>Workflows</span>
-          </Link>
-        </nav>
-      </aside>
+        <DashboardSidebar />
+        <SidebarInset className="border border-border bg-background shadow-sm dark:border-border/10 overflow-hidden">
+          {/* Header toolbar */}
+          <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border/40 bg-card/45 px-4 backdrop-blur-md">
+            <SidebarTrigger className="cursor-pointer -ml-1 text-muted-foreground hover:text-foreground transition-colors" />
+            <Separator orientation="vertical" className="mr-2 h-4 bg-border/50" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="text-sm font-medium text-muted-foreground/80">
+                    Workspace
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </header>
 
-      {/* Main Content Area */}
-      <main className="flex-1 bg-muted/10">
-        {children}
-      </main>
-    </div>
+          {/* Main content body */}
+          <main className="flex-1 overflow-y-auto bg-muted/5 p-6 md:p-8">
+            {children}
+          </main>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   )
 }
